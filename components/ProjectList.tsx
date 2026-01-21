@@ -15,8 +15,12 @@ export default function ProjectList() {
     title: '',
     idea: '',
     specials: '',
-    budget: 50,
-    duration: 3
+    budget: '선택 안 함',   // 0(숫자) 대신 '선택 안 함'(문자열)으로 변경
+    duration: '선택 안 함', // 3(숫자) 대신 '선택 안 함'(문자열)으로 변경
+    priority: '선택 안 함',
+    risk: '선택 안 함',
+    target: '',
+    regulation: ''
   });
   
   const router = useRouter();
