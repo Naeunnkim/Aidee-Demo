@@ -22,6 +22,16 @@ export default function ChatPage({ projectId }: { projectId: string }) {
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // 높이 조절 함수
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'; // 높이 초기화
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`; // 최대 200px까지 확장
+    }
+  };
+
   useEffect(() => {
     const fetchMessages = async () => {
       if (!projectId) return;
@@ -205,20 +215,35 @@ export default function ChatPage({ projectId }: { projectId: string }) {
 
         {/* 4. 푸터 입력창 */}
         <footer className="p-4 md:p-6 bg-white shrink-0 mb-2">
-          <form onSubmit={onFormSubmit} className="max-w-3xl mx-auto flex gap-3">
-            <div className="relative flex-1">
-              <input 
-                type="text"
-                value={input} 
-                onChange={(e) => setInput(e.target.value)}
+          <form 
+            onSubmit={onFormSubmit} 
+            className="max-w-4xl mx-auto flex items-end gap-3" // items-end로 버튼을 아래에 고정
+          >
+            <div className="relative flex-1 bg-gray-50 rounded-[26px] border border-gray-100 focus-within:border-blue-200 transition-all">
+              <textarea
+                ref={textareaRef}
+                rows={1}
+                value={input}
+                onChange={handleInput}
+                onKeyDown={(e) => {
+                  // 엔터키 전송, Shift+Enter 줄바꿈 로직
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    onFormSubmit(e as any);
+                    if (textareaRef.current) textareaRef.current.style.height = 'auto';
+                  }
+                }}
                 placeholder={`${selectedExpert.name}에게 무엇이든 물어보세요`}
-                className="w-full p-4 pl-12 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-sm"
+                className="w-full p-4 pl-12 rounded-[26px] bg-transparent outline-none resize-none text-[15px] leading-relaxed max-h-[200px] overflow-y-auto"
+                style={{ minHeight: '56px' }}
               />
-              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl font-light">+</span>
+              {/* 플러스 아이콘 위치를 입력창 높이에 따라 하단에 고정 */}
+              <span className="absolute left-5 bottom-[14px] text-gray-400 text-xl font-light">+</span>
             </div>
+
             <button 
               type="submit" 
-              className={`px-8 rounded-full font-bold transition-all duration-200 shrink-0 ${
+              className={`h-[56px] px-8 rounded-full font-bold transition-all duration-200 shrink-0 ${
                 input.trim() ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
               disabled={!input.trim() || isLoading}
