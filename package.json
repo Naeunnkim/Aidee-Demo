@@ -12,6 +12,7 @@
     "@ai-sdk/google": "^3.0.7",
     "@ai-sdk/react": "^3.0.32",
     "@auth/supabase-adapter": "^1.11.1",
+    "@google/generative-ai": "^0.24.1",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.90.1",
     "ai": "^6.0.31",
